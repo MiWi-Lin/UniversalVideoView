@@ -642,6 +642,7 @@ public class UniversalVideoView extends SurfaceView
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
+        Log.d("UniversalVideoView", "UVV onTouchEvent");
         if (isInPlaybackState() && mMediaController != null) {
             toggleMediaControlsVisibility();
         }

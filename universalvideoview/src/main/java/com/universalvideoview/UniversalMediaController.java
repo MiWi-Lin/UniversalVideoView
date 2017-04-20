@@ -22,6 +22,7 @@ import android.content.res.TypedArray;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -115,7 +116,6 @@ public class UniversalMediaController extends FrameLayout {
         mContext = context;
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View viewRoot = inflater.inflate(R.layout.uvv_player_controller, this);
-        viewRoot.setOnTouchListener(mTouchListener);
         initControllerView(viewRoot);
     }
 
@@ -169,6 +169,9 @@ public class UniversalMediaController extends FrameLayout {
         mTitle = (TextView) v.findViewById(R.id.title);
         mFormatBuilder = new StringBuilder();
         mFormatter = new Formatter(mFormatBuilder, Locale.getDefault());
+
+//        final ViewGroup rlVolumnContainer = (ViewGroup)findViewById(R.id.rl_volumn_container);
+//        new VolumeBrightnessHelper(mContext, rlVolumnContainer, rlVolumnContainer).init();
     }
 
 
@@ -236,9 +239,9 @@ public class UniversalMediaController extends FrameLayout {
         // paused with the progress bar showing the user hits play.
         mHandler.sendEmptyMessage(SHOW_PROGRESS);
 
-        Message msg = mHandler.obtainMessage(FADE_OUT);
+        mHandler.removeMessages(FADE_OUT);
         if (timeout != 0) {
-            mHandler.removeMessages(FADE_OUT);
+            Message msg = mHandler.obtainMessage(FADE_OUT);
             mHandler.sendMessageDelayed(msg, timeout);
         }
     }
@@ -391,12 +394,19 @@ public class UniversalMediaController extends FrameLayout {
         return position;
     }
 
+    boolean handled = false;
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                show(0); // show until hide is called
-                handled = false;
+                if (mShowing) {
+                    hide();
+                    handled = true;
+                }else {
+                    show(0); // show until hide is called
+                    handled = false;
+                }
                 break;
             case MotionEvent.ACTION_UP:
                 if (!handled) {
@@ -412,21 +422,6 @@ public class UniversalMediaController extends FrameLayout {
         }
         return true;
     }
-
-    boolean handled = false;
-    //如果正在显示,则使之消失
-    private OnTouchListener mTouchListener = new OnTouchListener() {
-        public boolean onTouch(View v, MotionEvent event) {
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                if (mShowing) {
-                    hide();
-                    handled = true;
-                    return true;
-                }
-            }
-            return false;
-        }
-    };
 
     @Override
     public boolean onTrackballEvent(MotionEvent ev) {
