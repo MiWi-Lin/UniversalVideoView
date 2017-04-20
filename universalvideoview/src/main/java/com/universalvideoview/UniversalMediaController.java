@@ -170,8 +170,15 @@ public class UniversalMediaController extends FrameLayout {
         mFormatBuilder = new StringBuilder();
         mFormatter = new Formatter(mFormatBuilder, Locale.getDefault());
 
-//        final ViewGroup rlVolumnContainer = (ViewGroup)findViewById(R.id.rl_volumn_container);
-//        new VolumeBrightnessHelper(mContext, rlVolumnContainer, rlVolumnContainer).init();
+        final ViewGroup rlVolumnContainer = (ViewGroup)findViewById(R.id.rl_volumn_container);
+        final VolumeBrightnessHelper volumeBrightnessHelper = new VolumeBrightnessHelper(mContext, rlVolumnContainer, rlVolumnContainer);
+        volumeBrightnessHelper.init();
+        volumeBrightnessHelper.setGestureAreaViewOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return UniversalMediaController.this.onTouchEvent(event);
+            }
+        });
     }
 
 

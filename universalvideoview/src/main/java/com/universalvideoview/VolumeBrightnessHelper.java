@@ -44,15 +44,20 @@ public class VolumeBrightnessHelper {
     private int mMaxVolume;
     private int mVolume = -1;
     private float mBrightness = -1f;
+    private View.OnTouchListener listener;
 
-    public VolumeBrightnessHelper(@NonNull Context context,@NonNull ViewGroup root,@NonNull View onTouchView) {
+    public VolumeBrightnessHelper(@NonNull Context context, @NonNull ViewGroup percentParentView, @NonNull View gestureAreaView) {
         this.context = context;
-        this.root = root;
-        this.onTouchView = onTouchView;
+        this.root = percentParentView;
+        this.onTouchView = gestureAreaView;
+    }
+
+    public void setGestureAreaViewOnTouchListener(View.OnTouchListener listener) {
+        this.listener = listener;
     }
 
     protected void init() {
-        LayoutInflater.from(context).inflate(R.layout.uvv_volumn_control_layout,root,true);
+        LayoutInflater.from(context).inflate(R.layout.uvv_volumn_control_layout, root, true);
 
         mAudioManager = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
         mMaxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
@@ -70,17 +75,20 @@ public class VolumeBrightnessHelper {
                 if (touchEvent) {
                     return true;
                 }
-                    switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
-                        case MotionEvent.ACTION_DOWN:
-                            Log.d("VolumeBrightnessHelper", "touchEvent:ACTION_DOWN");
-                            mDismissHandler.removeMessages(0);
-                            break;
-                        case MotionEvent.ACTION_UP:
-                            Log.d("VolumeBrightnessHelper", "touchEvent:ACTION_UP");
-                            endGesture();
-                            break;
-                    }
-                    return true;
+                switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
+                    case MotionEvent.ACTION_DOWN:
+                        if(listener!=null){
+                            listener.onTouch(onTouchView,motionEvent);
+                        }
+                        Log.d("VolumeBrightnessHelper", "touchEvent:ACTION_DOWN");
+                        mDismissHandler.removeMessages(0);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        Log.d("VolumeBrightnessHelper", "touchEvent:ACTION_UP");
+                        endGesture();
+                        break;
+                }
+                return true;
             }
         });
     }
@@ -108,7 +116,7 @@ public class VolumeBrightnessHelper {
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
             float mOldX = e1.getX(), mOldY = e1.getY();
             int y = (int) e2.getY();
-            Display disp = ((Activity)context).getWindowManager().getDefaultDisplay();
+            Display disp = ((Activity) context).getWindowManager().getDefaultDisplay();
             int windowWidth = disp.getWidth();
             int windowHeight = disp.getHeight();
             //1440 2392
@@ -131,9 +139,16 @@ public class VolumeBrightnessHelper {
         @Override
         public boolean onSingleTapUp(MotionEvent e) {
             Log.d("VolumeBrightnesGestureL", "onSingleTapUp");
+            onEventUp(e);
             return true;
         }
     }
+
+    private void onEventUp(MotionEvent e) {
+        if(listener!=null)
+            listener.onTouch(onTouchView,e);
+    }
+
 
     /**
      * 声音高低
@@ -141,6 +156,10 @@ public class VolumeBrightnessHelper {
      * @param percent
      */
     private void onVolumeSlide(float percent) {
+        if(listener!=null){
+            MotionEvent event = MotionEvent.obtain(1,1,MotionEvent.ACTION_CANCEL,1,1,1);
+            listener.onTouch(onTouchView,event);
+        }
         if (mVolume == -1) {
             mVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
             if (mVolume < 0)
@@ -173,6 +192,10 @@ public class VolumeBrightnessHelper {
      * @param percent
      */
     private void onBrightnessSlide(float percent) {
+        if(listener!=null){
+            MotionEvent event = MotionEvent.obtain(1,1,MotionEvent.ACTION_CANCEL,1,1,1);
+            listener.onTouch(onTouchView,event);
+        }
         final Window window = ((Activity) context).getWindow();
         if (mBrightness < 0) {
             mBrightness = window.getAttributes().screenBrightness;
@@ -196,4 +219,5 @@ public class VolumeBrightnessHelper {
         lp.height = (int) (mOperationFull.getLayoutParams().height * lpa.screenBrightness);
         mOperationPercent.setLayoutParams(lp);
     }
+
 }
