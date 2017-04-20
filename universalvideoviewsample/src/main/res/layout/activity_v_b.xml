@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/uvv_black"
+              android:orientation="vertical">
+
+    <RelativeLayout
+        android:id="@+id/rl_content_container"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:background="@color/uvv_green">
+
+        <RelativeLayout
+            android:id="@+id/operation_volume_brightness"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true">
+
+            <ImageView
+                android:id="@+id/operation_full"
+                android:layout_width="20dp"
+                android:layout_height="50dp"
+                android:src="@color/uvv_volumn_bg"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"/>
+
+            <ImageView
+                android:id="@+id/operation_bg"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_below="@id/operation_full"
+                android:scaleType="centerInside"
+                android:src="@mipmap/uvv_brightness_bg"/>
+
+            <ImageView
+                android:id="@+id/operation_percent"
+                android:layout_width="20dp"
+                android:layout_height="25dp"
+                android:layout_alignBottom="@id/operation_full"
+                android:scaleType="centerInside"
+                android:src="@color/uvv_volumn_progress"/>
+
+        </RelativeLayout>
+    </RelativeLayout>
+</LinearLayout>

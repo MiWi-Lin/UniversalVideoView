@@ -1,0 +1,167 @@
+package com.universalvideoviewsample;
+
+import android.content.Context;
+import android.media.AudioManager;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.Display;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+
+/**
+ * 〖Author〗 MiWi.LIN ＾＾＾＾〖E-mail〗 80383585@qq.com
+ * ======================================================== Copyright(c) 2017 ==
+ * 〖Version〗 1.0 <BR/>
+ * 〖Date〗 2017/04/20_14:11 <BR/>
+ * 〖Desc〗 <BR/>
+ * 〖Modify By〗 <BR/>
+ */
+public class VolumeBrightnessActivity extends AppCompatActivity {
+
+    private RelativeLayout mVolumeBrightnessLayout;
+    private ImageView mOperationBg;
+    private ImageView mOperationPercent;
+    private GestureDetector mGestureDetector;
+    private AudioManager mAudioManager;
+    private int mMaxVolume;
+    private int mVolume = -1;
+    private float mBrightness = -1f;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_v_b);
+        RelativeLayout rlContentContainer = (RelativeLayout) findViewById(R.id.rl_content_container);
+        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        mMaxVolume = mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        mVolumeBrightnessLayout = (RelativeLayout) findViewById(R.id.operation_volume_brightness);
+        mVolumeBrightnessLayout.setVisibility(View.GONE);
+        mOperationBg = (ImageView) findViewById(R.id.operation_bg);
+        mOperationPercent = (ImageView) findViewById(R.id.operation_percent);
+        mGestureDetector = new GestureDetector(VolumeBrightnessActivity.this, new VolumeBrightnesGestureListener());
+        rlContentContainer.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                if (mGestureDetector.onTouchEvent(motionEvent)) {
+                    return true;
+                }
+                switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
+                    case MotionEvent.ACTION_DOWN:
+                        mDismissHandler.removeMessages(0);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        endGesture();
+                        break;
+                }
+                return true;
+            }
+        });
+    }
+
+
+    private Handler mDismissHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == 0) {
+                mVolumeBrightnessLayout.setVisibility(View.GONE);
+            }
+        }
+    };
+
+    private void endGesture() {
+        mVolume = -1;
+        mBrightness = -1f;
+        // 隐藏
+        mDismissHandler.removeMessages(0);
+        mDismissHandler.sendEmptyMessageDelayed(0, 500);
+    }
+
+    private class VolumeBrightnesGestureListener extends GestureDetector.SimpleOnGestureListener {
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            float mOldX = e1.getX(), mOldY = e1.getY();
+            int y = (int) e2.getY();
+            Display disp = getWindowManager().getDefaultDisplay();
+            int windowWidth = disp.getWidth();
+            int windowHeight = disp.getHeight();
+            //1440 2392
+            if (mOldX > windowWidth * 3.0 / 5) {
+                onVolumeSlide((mOldY - y) * 3 / windowHeight);
+                return true;
+            } else if (mOldX < windowWidth * 2.0 / 5.0) {
+                onBrightnessSlide((mOldY - y) * 3 / windowHeight);
+                return true;
+            }
+            return false;
+        }
+    }
+
+    /**
+     * 声音高低
+     *
+     * @param percent
+     */
+    private void onVolumeSlide(float percent) {
+        if (mVolume == -1) {
+            mVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+            if (mVolume < 0)
+                mVolume = 0;
+
+            mOperationBg.setImageResource(R.mipmap.uvv_volumn_bg);
+            ViewGroup.LayoutParams lp = mOperationPercent.getLayoutParams();
+            lp.height = findViewById(R.id.operation_full).getLayoutParams().height * mVolume / mMaxVolume;
+            mOperationPercent.setLayoutParams(lp);
+            mVolumeBrightnessLayout.setVisibility(View.VISIBLE);
+        }
+
+        int index = (int) (percent * mMaxVolume) + mVolume;
+
+        if (index > mMaxVolume)
+            index = mMaxVolume;
+        else if (index < 0)
+            index = 0;
+
+        mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, index, 0);
+        ViewGroup.LayoutParams lp = mOperationPercent.getLayoutParams();
+        lp.height = findViewById(R.id.operation_full).getLayoutParams().height * index / mMaxVolume;
+        mOperationPercent.setLayoutParams(lp);
+    }
+
+
+    /**
+     * 处理屏幕亮暗
+     *
+     * @param percent
+     */
+    private void onBrightnessSlide(float percent) {
+        if (mBrightness < 0) {
+            mBrightness = getWindow().getAttributes().screenBrightness;
+            if (mBrightness < 0.00f)
+                mBrightness = 0.5f;
+
+            mOperationBg.setImageResource(R.mipmap.uvv_brightness_bg);
+            ViewGroup.LayoutParams lp = mOperationPercent.getLayoutParams();
+            lp.height = (int) (findViewById(R.id.operation_full).getLayoutParams().height * mBrightness);
+            mOperationPercent.setLayoutParams(lp);
+            mVolumeBrightnessLayout.setVisibility(View.VISIBLE);
+        }
+        WindowManager.LayoutParams lpa = getWindow().getAttributes();
+        lpa.screenBrightness = mBrightness + percent;
+        if (lpa.screenBrightness > 1.0f)
+            lpa.screenBrightness = 1.0f;
+        else if (lpa.screenBrightness < 0.00f)
+            lpa.screenBrightness = 0.00f;
+        getWindow().setAttributes(lpa);
+        ViewGroup.LayoutParams lp = mOperationPercent.getLayoutParams();
+        lp.height = (int) (findViewById(R.id.operation_full).getLayoutParams().height * lpa.screenBrightness);
+        mOperationPercent.setLayoutParams(lp);
+    }
+}

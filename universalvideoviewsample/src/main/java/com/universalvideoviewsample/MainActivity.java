@@ -17,6 +17,7 @@
 
 package com.universalvideoviewsample;
 
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -52,6 +53,13 @@ public class MainActivity extends AppCompatActivity implements UniversalVideoVie
 
         mVideoLayout = findViewById(R.id.video_layout);
         mBottomLayout = findViewById(R.id.bottom_layout);
+        TextView introductionTv = (TextView)findViewById(R.id.introduction);
+        introductionTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this,VolumeBrightnessActivity.class));
+            }
+        });
         mVideoView = (UniversalVideoView) findViewById(R.id.videoView);
         mMediaController = (UniversalMediaController) findViewById(R.id.media_controller);
         mVideoView.setMediaController(mMediaController);

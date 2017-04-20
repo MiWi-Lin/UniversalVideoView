@@ -6,4 +6,7 @@
     <color name="uvv_light_gray">#ffF0F0F0</color>
     <color name="uvv_titlebar_bg">#7f000000</color>
 
+    <color name="uvv_volumn_progress">#80000000</color>
+
+    <color name="uvv_volumn_bg">#55000000</color>
 </resources>
