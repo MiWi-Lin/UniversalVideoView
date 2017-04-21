@@ -77,8 +77,8 @@ public class VolumeBrightnessHelper {
                 }
                 switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
                     case MotionEvent.ACTION_DOWN:
-                        if(listener!=null){
-                            listener.onTouch(onTouchView,motionEvent);
+                        if (listener != null) {
+                            listener.onTouch(onTouchView, motionEvent);
                         }
                         Log.d("VolumeBrightnessHelper", "touchEvent:ACTION_DOWN");
                         mDismissHandler.removeMessages(0);
@@ -107,8 +107,10 @@ public class VolumeBrightnessHelper {
         mVolume = -1;
         mBrightness = -1f;
         // 隐藏
-        mDismissHandler.removeMessages(0);
-        mDismissHandler.sendEmptyMessageDelayed(0, 500);
+        if (mVolumeBrightnessLayout.getVisibility() == View.VISIBLE){
+            mDismissHandler.removeMessages(0);
+            mDismissHandler.sendEmptyMessageDelayed(0, 500);
+        }
     }
 
     private class VolumeBrightnesGestureListener extends GestureDetector.SimpleOnGestureListener {
@@ -145,8 +147,9 @@ public class VolumeBrightnessHelper {
     }
 
     private void onEventUp(MotionEvent e) {
-        if(listener!=null)
-            listener.onTouch(onTouchView,e);
+        if (listener != null)
+            listener.onTouch(onTouchView, e);
+        endGesture();
     }
 
 
@@ -156,9 +159,9 @@ public class VolumeBrightnessHelper {
      * @param percent
      */
     private void onVolumeSlide(float percent) {
-        if(listener!=null){
-            MotionEvent event = MotionEvent.obtain(1,1,MotionEvent.ACTION_CANCEL,1,1,1);
-            listener.onTouch(onTouchView,event);
+        if (listener != null) {
+            MotionEvent event = MotionEvent.obtain(1, 1, MotionEvent.ACTION_CANCEL, 1, 1, 1);
+            listener.onTouch(onTouchView, event);
         }
         if (mVolume == -1) {
             mVolume = mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
@@ -192,9 +195,9 @@ public class VolumeBrightnessHelper {
      * @param percent
      */
     private void onBrightnessSlide(float percent) {
-        if(listener!=null){
-            MotionEvent event = MotionEvent.obtain(1,1,MotionEvent.ACTION_CANCEL,1,1,1);
-            listener.onTouch(onTouchView,event);
+        if (listener != null) {
+            MotionEvent event = MotionEvent.obtain(1, 1, MotionEvent.ACTION_CANCEL, 1, 1, 1);
+            listener.onTouch(onTouchView, event);
         }
         final Window window = ((Activity) context).getWindow();
         if (mBrightness < 0) {

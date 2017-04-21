@@ -556,8 +556,10 @@ public class UniversalMediaController extends FrameLayout {
 
     private void doPauseResume() {
         if (mPlayer.isPlaying()) {
+            showCenterView(R.id.center_play_btn);
             mPlayer.pause();
         } else {
+            hideCenterView();
             mPlayer.start();
         }
         updatePausePlay();

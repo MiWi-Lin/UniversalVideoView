@@ -8,5 +8,6 @@
 
     <color name="uvv_volumn_progress">#80000000</color>
 
-    <color name="uvv_volumn_bg">#55000000</color>
+    <color name="uvv_volumn_progress_bg">#55000000</color>
+    <color name="uvv_volumn_bg">#32FFFFFF</color>
 </resources>
