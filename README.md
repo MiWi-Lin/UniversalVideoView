@@ -115,9 +115,9 @@ but providing more customization feature: fitXY  or keeping aspect ratio fullscr
 ## `UniversalMediaController` attribute
  * `uvv_scalable`, show or hide the scale button. if you will not play the video in fullscreen.
 
-# TODO
- * Brightness control on `UniversalMediaController`.
- * Volume Control on `UniversalMediaController`.
+# Brightness & Volume Control by Gesture
+ * Brightness control on `VolumeBrightnessModule`.
+ * Volume Control on `VolumeBrightnessModule`.
 
 # License
 

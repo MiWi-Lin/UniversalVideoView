@@ -22,7 +22,6 @@ import android.content.res.TypedArray;
 import android.os.Handler;
 import android.os.Message;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -171,9 +170,9 @@ public class UniversalMediaController extends FrameLayout {
         mFormatter = new Formatter(mFormatBuilder, Locale.getDefault());
 
         final ViewGroup rlVolumnContainer = (ViewGroup)findViewById(R.id.rl_volumn_container);
-        final VolumeBrightnessHelper volumeBrightnessHelper = new VolumeBrightnessHelper(mContext, rlVolumnContainer, rlVolumnContainer);
-        volumeBrightnessHelper.init();
-        volumeBrightnessHelper.setGestureAreaViewOnTouchListener(new OnTouchListener() {
+        final VolumeBrightnessModule volumeBrightnessModule = new VolumeBrightnessModule(mContext, rlVolumnContainer, rlVolumnContainer);
+        volumeBrightnessModule.init();
+        volumeBrightnessModule.setGestureAreaViewOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 return UniversalMediaController.this.onTouchEvent(event);

@@ -28,7 +28,7 @@ import android.widget.RelativeLayout;
  * 〖Desc〗 <BR/>
  * 〖Modify By〗 <BR/>
  */
-public class VolumeBrightnessHelper {
+public class VolumeBrightnessModule {
 
     private Context context;
     private ViewGroup root;
@@ -46,7 +46,7 @@ public class VolumeBrightnessHelper {
     private float mBrightness = -1f;
     private View.OnTouchListener listener;
 
-    public VolumeBrightnessHelper(@NonNull Context context, @NonNull ViewGroup percentParentView, @NonNull View gestureAreaView) {
+    public VolumeBrightnessModule(@NonNull Context context, @NonNull ViewGroup percentParentView, @NonNull View gestureAreaView) {
         this.context = context;
         this.root = percentParentView;
         this.onTouchView = gestureAreaView;
@@ -71,7 +71,7 @@ public class VolumeBrightnessHelper {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 final boolean touchEvent = mGestureDetector.onTouchEvent(motionEvent);
-                Log.d("VolumeBrightnessHelper", "touchEvent:" + touchEvent);
+                Log.d("VolumeBrightnessModule", "touchEvent:" + touchEvent);
                 if (touchEvent) {
                     return true;
                 }
@@ -80,11 +80,11 @@ public class VolumeBrightnessHelper {
                         if (listener != null) {
                             listener.onTouch(onTouchView, motionEvent);
                         }
-                        Log.d("VolumeBrightnessHelper", "touchEvent:ACTION_DOWN");
+                        Log.d("VolumeBrightnessModule", "touchEvent:ACTION_DOWN");
                         mDismissHandler.removeMessages(0);
                         break;
                     case MotionEvent.ACTION_UP:
-                        Log.d("VolumeBrightnessHelper", "touchEvent:ACTION_UP");
+                        Log.d("VolumeBrightnessModule", "touchEvent:ACTION_UP");
                         endGesture();
                         break;
                 }
